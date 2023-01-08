@@ -8,6 +8,14 @@ class EmployeeDataSerializer(serializers.ModelSerializer):
     # SerialzerMethodField are used to return something that is not available in models, something that has to be computed dynamically
     makeSentence = serializers.SerializerMethodField()
 
+    def validate(self, validated_data):
+
+        if validated_data.get('age'):
+            age = validated_data.get('age')
+            if age < 18:
+                raise serializers.ValidationError("Age should be >=18")
+        return validated_data
+
     class Meta:
         model = EmployeeData
         fields = '__all__'
@@ -17,11 +25,3 @@ class EmployeeDataSerializer(serializers.ModelSerializer):
         name = obj.name
         age = obj.age
         return f'{name} is {age} years old'
-
-    def validate(self, validated_data):
-
-        if validated_data.get('age'):
-            age = validated_data.get('age')
-            if age < 18:
-                raise serializers.ValidationError("Age should be >=18")
-        return super().validated_data
